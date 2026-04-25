@@ -1,27 +1,114 @@
-#container {
-  text-align: center;
-
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+.container {
+  padding: 40px 24px;
+  background-color: #ffffff;
+  min-height: 100%;
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #333;
+  margin-bottom: 30px;
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
+.input-container {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  gap: 12px;
+}
 
-  color: #8c8c8c;
+.custom-input {
+  --padding-start: 0;
+  --placeholder-color: #999;
+  --placeholder-font-weight: 400;
+  --color: #333;
+  color: #333;
+  border-bottom: 1px solid #999;
+  font-size: 18px;
+  --background: transparent;
+  --highlight-height: 0;
+}
 
+.add-button {
+  --background: #444;
+  --color: white;
+  --border-radius: 10px;
+  height: 40px;
+  width: 40px;
+  margin: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --box-shadow: none;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  background-color: white;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+ion-checkbox {
+  --size: 20px;
+  --checkbox-background: white;
+  --checkbox-background-checked: #777;
+  --border-color: #999;
+  --border-color-checked: #777;
+  --border-radius: 4px;
+  --checkmark-color: white;
   margin: 0;
 }
 
-#container a {
-  text-decoration: none;
+.task-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 700;
+  color: #444;
+}
+
+.task-title.completed {
+  text-decoration: line-through;
+  color: #bbb;
+  font-weight: 600;
+}
+
+.delete-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  height: 24px;
+  width: 24px;
+  margin: 0;
+  --color: #333;
+
+  ion-icon {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.remaining-text {
+  font-size: 14px;
+  font-weight: 700;
+  color: #444;
+  margin-top: 20px;
+  margin-bottom: 16px;
+}
+
+.quote {
+  font-size: 15px;
+  font-style: italic;
+  color: #aaa;
+  line-height: 1.4;
 }

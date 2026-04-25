@@ -1,20 +1,40 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <div class="container">
+    <h1 class="title">Your To Do</h1>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    <div class="input-container">
+      <ion-input
+        placeholder="Add new task"
+        [(ngModel)]="newTask"
+        class="custom-input">
+      </ion-input>
+      <ion-button (click)="addTask()" class="add-button" fill="solid">
+        <ion-icon slot="icon-only" name="add"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="task-list">
+      <div class="task-item" *ngFor="let task of tasks">
+        <ion-checkbox
+          [checked]="task.completed"
+          (ionChange)="toggleTask(task)"
+          mode="md">
+        </ion-checkbox>
+        <span [class.completed]="task.completed" class="task-title">
+          {{ task.title }}
+        </span>
+        <ion-button (click)="deleteTask(task)" fill="clear" class="delete-button">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <p class="remaining-text">
+      <i><b>Your remaining todos : {{ remainingTasksCount }}</b></i>
+    </p>
+
+    <p class="quote">
+      "Doing what you love is the cornerstone of having abundance in your life." - Wayne Dyer
+    </p>
   </div>
 </ion-content>
