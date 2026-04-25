@@ -3,6 +3,7 @@ import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 import { Platform } from '@ionic/angular';
 
 import { Task } from '../models/task.model';
+import { Category } from '../models/category.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +30,8 @@ export class Database {
     console.log('DB created');
 
     await this.createTaskTable();
+    await this.createCategoryTable();
+    await this.addCategoryToTasks();
 
     this.isDbInitialized = true;
   }
@@ -44,9 +47,36 @@ export class Database {
     await this.dbInstance?.executeSql(query, []);
   }
 
+  async createCategoryTable() {
+    const query = `
+      CREATE TABLE IF NOT EXISTS categories (
+        id TEXT PRIMARY KEY,
+        name TEXT,
+        color TEXT
+      )
+    `;
+    await this.dbInstance?.executeSql(query, []);
+  }
+
+  async addCategoryToTasks() {
+    const query = `ALTER TABLE tasks ADD COLUMN category_id TEXT;`;
+    await this.dbInstance?.executeSql(query, []);
+  }
+
   async getTasks(): Promise<Task[]> {
     await this.init();
 
+    const query = `
+      SELECT 
+        t.id,
+        t.title,
+        t.completed,
+        t.category_id,
+        c.name as category_name,
+        c.color as category_color
+        FROM tasks t
+        LEFT JOIN categories c ON t.category_id = c.id;
+    `;
     const res = await this.dbInstance?.executeSql(`SELECT * FROM tasks`, []);
     const tasks: Task[] = [];
 
@@ -55,7 +85,12 @@ export class Database {
       tasks.push({
         id: item.id,
         title: item.title,
-        completed: item.completed === 1
+        completed: item.completed === 1,
+        category: {
+          id: item.category_id,
+          name: item.category_name,
+          color: item.category_color
+        }
       });
     }
 
@@ -65,21 +100,23 @@ export class Database {
   async addTask(task: Task) {
     await this.init();
 
-    const query = `INSERT INTO tasks (id, title, completed) VALUES (?, ?, ?)`;
+    const query = `INSERT INTO tasks (id, title, completed, category_id) VALUES (?, ?, ?, ?)`;
     await this.dbInstance?.executeSql(query, [
       task.id,
       task.title,
-      task.completed ? 1 : 0
+      task.completed ? 1 : 0,
+      task.category?.id,
     ]);
   }
 
   async updateTask(task: Task) {
     await this.init();
 
-    const query = `UPDATE tasks SET title = ?, completed = ? WHERE id = ?`;
+    const query = `UPDATE tasks SET title = ?, completed = ?, category_id = ? WHERE id = ?`;
     await this.dbInstance?.executeSql(query, [
       task.title,
       task.completed ? 1 : 0,
+      task.category?.id,
       task.id
     ]);
   }
@@ -88,6 +125,53 @@ export class Database {
     await this.init();
 
     const query = `DELETE FROM tasks WHERE id = ?`;
+    await this.dbInstance?.executeSql(query, [id]);
+  }
+
+  async getCategories(): Promise<Category[]> {
+    await this.init();
+
+    const res = await this.dbInstance?.executeSql(`SELECT * FROM categories`, []);
+    const categories: Category[] = [];
+
+    for (let i = 0; i < (res?.rows.length || 0); i++) {
+      const item = res!.rows.item(i);
+      categories.push({
+        id: item.id,
+        name: item.name,
+        color: item.color,
+      });
+    }
+
+    return categories;
+  }
+
+  async addCategory(category: Category) {
+    await this.init();
+
+    const query = `INSERT INTO categories (id, name, color) VALUES (?, ?, ?)`;
+    await this.dbInstance?.executeSql(query, [
+      category.id,
+      category.name,
+      category.color,
+    ]);
+  }
+
+  async updateCategory(category: Category) {
+    await this.init();
+
+    const query = `UPDATE categories SET name = ?, color = ? WHERE id = ?`;
+    await this.dbInstance?.executeSql(query, [
+      category.name,
+      category.color,
+      category.id
+    ]);
+  }
+  
+  async deleteCategory(id: string) {
+    await this.init();
+
+    const query = `DELETE FROM categories WHERE id = ?`;
     await this.dbInstance?.executeSql(query, [id]);
   }
 }
