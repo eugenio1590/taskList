@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Category } from '../../../models/category.model';
 import { Database } from '../../../services/database';
+import { CategoriesPage } from 'src/app/categories/categories.page';
 
 @Component({
   selector: 'app-task-creator-modal',
@@ -34,6 +35,25 @@ export class TaskCreatorModalComponent implements OnInit {
 
   selectCategory(category: Category) {
     this.selectedCategory = category;
+  }
+
+  async manageCategories() {
+    const modal = await this.modalCtrl.create({
+      component: CategoriesPage
+    });
+
+    await modal.present();
+
+    await modal.onWillDismiss();
+    this.categories = await this.database.getCategories();
+
+    // Re-sync selectedCategory if it was modified or deleted in the management view
+    if (this.selectedCategory) {
+      const updated = this.categories.find(c => c.id === this.selectedCategory?.id);
+      this.selectedCategory = updated || (this.categories.length > 0 ? this.categories[0] : null);
+    } else if (this.categories.length > 0) {
+      this.selectedCategory = this.categories[0];
+    }
   }
 
   cancel() {

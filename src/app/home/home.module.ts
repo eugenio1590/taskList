@@ -6,6 +6,7 @@ import { HomePage } from './home.page';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 
 import { HomePageRoutingModule } from './home-routing.module';
+import { CategoriesPageModule } from '../categories/categories.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { HomePageRoutingModule } from './home-routing.module';
     CommonModule,
     FormsModule,
     IonicModule,
-    HomePageRoutingModule
+    HomePageRoutingModule,
+    CategoriesPageModule
   ],
   declarations: [HomePage, TaskCreatorModalComponent]
 })

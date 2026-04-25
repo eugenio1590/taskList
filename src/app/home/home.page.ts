@@ -40,9 +40,11 @@ export class HomePage implements OnInit {
         category: data.category
       };
 
-      this.tasks.push(task);
       await this.database.addTask(task);
     }
+
+    // Always refresh tasks to ensure updated category names/colors are reflected
+    this.tasks = await this.database.getTasks();
   }
 
   async addTask() {

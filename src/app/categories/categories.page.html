@@ -1,0 +1,70 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="arrow-back-outline" slot="icon-only" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title color="dark">{{ editingCategory ? 'Edit Category' : 'Categories' }}</ion-title>
+    <ion-buttons slot="end" *ngIf="editingCategory">
+      <ion-button (click)="cancelEdit()" color="medium">
+        CANCEL
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="content-container">
+    <div class="title-section">
+      <ion-input
+        [placeholder]="editingCategory ? 'Edit Name' : 'Nueva Categoría'"
+        [(ngModel)]="newCategoryName"
+        class="category-input"
+      ></ion-input>
+    </div>
+
+    <div class="color-selection-section">
+      <div class="section-label">Select Color</div>
+      <div class="colors-container">
+        <div
+          *ngFor="let color of availableColors"
+          (click)="selectColor(color)"
+          class="color-circle"
+          [style.background-color]="color"
+          [class.selected]="selectedColor === color"
+        >
+          <ion-icon *ngIf="selectedColor === color" name="checkmark" color="light"></ion-icon>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="save-cat-btn" (click)="saveCategory()" [disabled]="!newCategoryName.trim()">
+        {{ editingCategory ? 'UPDATE CATEGORY' : 'ADD CATEGORY' }}
+      </ion-button>
+    </div>
+
+    <div class="list-section">
+      <div class="section-label">Existing Categories</div>
+      <div class="category-list">
+        <div
+          class="category-item"
+          *ngFor="let category of categories"
+          [class.is-editing]="editingCategory?.id === category.id"
+          (click)="startEdit(category)"
+        >
+          <div class="color-indicator" [style.background-color]="category.color"></div>
+          <span class="category-name">{{ category.name }}</span>
+
+          <div class="actions">
+            <ion-button fill="clear" (click)="startEdit(category); $event.stopPropagation()" class="action-btn">
+              <ion-icon slot="icon-only" name="create-outline" color="dark"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" (click)="deleteCategory(category.id); $event.stopPropagation()" class="action-btn">
+              <ion-icon slot="icon-only" name="trash-outline" color="danger"></ion-icon>
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
