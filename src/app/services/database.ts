@@ -31,7 +31,6 @@ export class Database {
 
     await this.createTaskTable();
     await this.createCategoryTable();
-    await this.addCategoryToTasks();
 
     this.isDbInitialized = true;
   }
@@ -41,7 +40,8 @@ export class Database {
       CREATE TABLE IF NOT EXISTS tasks (
         id TEXT PRIMARY KEY,
         title TEXT,
-        completed INTEGER
+        completed INTEGER,
+        category_id TEXT
       )
     `;
     await this.dbInstance?.executeSql(query, []);
@@ -55,11 +55,6 @@ export class Database {
         color TEXT
       )
     `;
-    await this.dbInstance?.executeSql(query, []);
-  }
-
-  async addCategoryToTasks() {
-    const query = `ALTER TABLE tasks ADD COLUMN category_id TEXT;`;
     await this.dbInstance?.executeSql(query, []);
   }
 
