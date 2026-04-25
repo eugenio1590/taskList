@@ -2,12 +2,12 @@
   <div class="container">
     <div class="header-row">
       <h1 class="title">Your To Do</h1>
-      <ion-button fill="clear" (click)="openFilter()" class="filter-button" [class.filter-active]="selectedCategoryId !== null">
+      <ion-button *ngIf="addWithCategoryEnabled" fill="clear" (click)="openFilter()" class="filter-button" [class.filter-active]="selectedCategoryId !== null">
         <ion-icon slot="icon-only" [name]="selectedCategoryId ? 'filter' : 'filter-outline'"></ion-icon>
       </ion-button>
     </div>
 
-    <div class="input-container">
+    <div class="input-container" *ngIf="!addWithCategoryEnabled">
       <ion-input
         placeholder="Add new task"
         [(ngModel)]="newTask"
@@ -29,7 +29,7 @@
           {{ task.title }}
         </span>
         <ion-chip
-          *ngIf="task.category"
+          *ngIf="task.category && addWithCategoryEnabled"
           [style.background]="task.category.color"
           style="color: white;"
         >
@@ -59,7 +59,7 @@
     </p>
   </div>
 
-  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="addWithCategoryEnabled">
     <ion-fab-button (click)="openAddTaskModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

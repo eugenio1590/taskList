@@ -29,7 +29,7 @@
       <div class="category-selection-area">
         <div class="category-header">
           <div class="section-label">Choose Category</div>
-          <ion-button fill="solid" size="small" (click)="manageCategories()" class="manage-btn">
+          <ion-button *ngIf="enableAddCategories" fill="solid" size="small" (click)="manageCategories()" class="manage-btn">
             <ion-icon name="settings-outline" slot="start"></ion-icon>
             Manage
           </ion-button>

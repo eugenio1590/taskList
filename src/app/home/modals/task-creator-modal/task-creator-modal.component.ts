@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { Category } from '../../../models/category.model';
 import { Database } from '../../../services/database';
 import { CategoriesPage } from 'src/app/categories/categories.page';
+import { RemoteConfig } from 'src/app/services/remote-config';
 
 @Component({
   selector: 'app-task-creator-modal',
@@ -15,10 +16,12 @@ export class TaskCreatorModalComponent implements OnInit {
   categories: Category[] = [];
   selectedCategory: Category | null = null;
   currentDate: string = '';
+  enableAddCategories: boolean = false;
 
   constructor(
     private modalCtrl: ModalController,
-    private database: Database
+    private database: Database,
+    private remoteConfig: RemoteConfig
   ) {
     const now = new Date();
     this.currentDate = now.toLocaleDateString('es-ES', {
@@ -31,6 +34,13 @@ export class TaskCreatorModalComponent implements OnInit {
 
   async ngOnInit() {
     this.categories = await this.database.getCategories();
+
+    try {
+      this.enableAddCategories = await this.remoteConfig.getBoolean('enable_add_categories');
+    } catch(e) {
+      console.error('Error fetching remote config', e);
+      this.enableAddCategories = false; // Default
+    }
   }
 
   selectCategory(category: Category) {

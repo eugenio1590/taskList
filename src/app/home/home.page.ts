@@ -4,6 +4,7 @@ import { Task } from '../models/task.model';
 import { Database } from '../services/database';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
+import { RemoteConfig } from '../services/remote-config';
 
 @Component({
   selector: 'app-home',
@@ -16,15 +17,24 @@ export class HomePage implements OnInit {
   allTasks: Task[] = [];
   displayTasks: Task[] = [];
   selectedCategoryId: string | null = null;
+  addWithCategoryEnabled: boolean = false;
 
   constructor(
     private database: Database,
+    private remoteConfig: RemoteConfig,
     private modalCtrl: ModalController
   ) {
   }
 
   async ngOnInit() {
-    this.loadTasks();
+    await this.loadTasks();
+    
+    try {
+      this.addWithCategoryEnabled = await this.remoteConfig.getBoolean('add_tasks_with_category');
+    } catch(e) {
+      console.error('Error fetching remote config', e);
+      this.addWithCategoryEnabled = false; // Default
+    }
   }
 
   async loadTasks() {

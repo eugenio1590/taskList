@@ -21,6 +21,8 @@
     "@angular/platform-browser": "^20.0.0",
     "@angular/platform-browser-dynamic": "^20.0.0",
     "@angular/router": "^20.0.0",
+    "@angular/fire": "^19.0.0",
+    "firebase": "^11.0.0",
     "@awesome-cordova-plugins/sqlite": "^9.1.4",
     "@ionic/angular": "^8.0.0",
     "@ionic/cordova-builders": "^12.3.0",
