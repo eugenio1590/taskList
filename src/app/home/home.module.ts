@@ -6,6 +6,7 @@ import { HomePage } from './home.page';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
 
+import { SharedModule } from '../shared/shared.module';
 import { HomePageRoutingModule } from './home-routing.module';
 import { CategoriesPageModule } from '../categories/categories.module';
 
@@ -15,6 +16,7 @@ import { CategoriesPageModule } from '../categories/categories.module';
     CommonModule,
     FormsModule,
     IonicModule,
+    SharedModule,
     HomePageRoutingModule,
     CategoriesPageModule
   ],

@@ -18,7 +18,7 @@
       </ion-button>
     </div>
 
-    <div class="task-list">
+    <div class="task-list" *ngIf="displayTasks.length > 0; else emptyState">
       <div class="task-item" *ngFor="let task of displayTasks">
         <ion-checkbox
           [checked]="task.completed"
@@ -43,7 +43,14 @@
       </div>
     </div>
 
-    <p class="remaining-text">
+    <ng-template #emptyState>
+      <app-empty-state
+        [icon]="'clipboard-outline'"
+        [message]="!selectedCategoryId ? 'You have no tasks yet. Add one above!' : 'No tasks found for this category.'"
+      ></app-empty-state>
+    </ng-template>
+
+    <p class="remaining-text" *ngIf="displayTasks.length > 0">
       <i><b>Your remaining todos : {{ remainingTasksCount }}</b></i>
     </p>
 
