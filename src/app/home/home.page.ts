@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Task } from '../models/task.model';
+import { Database } from '../services/database';
 
 @Component({
   selector: 'app-home',
@@ -9,33 +10,41 @@ import { Task } from '../models/task.model';
 })
 export class HomePage {
   newTask: string = '';
-  tasks: Task[];
+  tasks: Task[] = [];
 
-  constructor() {
-    this.tasks = [
-      { id: '1', title: 'This is an example of a task #1', completed: false },
-      { id: '2', title: 'This is an example of a task #2', completed: true }
-    ];
+  constructor(private database: Database) {
   }
 
-  addTask() {
+  async ngOnInit() {
+    this.tasks = await this.database.getTasks();
+  }
+
+  async addTask() {
     if (!this.newTask.trim()) return;
 
-    this.tasks.push({
+    let task: Task = {
       id: Date.now().toString(),
       title: this.newTask,
       completed: false
-    });
+    }
+
+    this.tasks.push(task);
 
     this.newTask = '';
+
+    await this.database.addTask(task);
   }
 
-  toggleTask(task: Task) {
+  async toggleTask(task: Task) {
     task.completed = !task.completed;
+
+    await this.database.updateTask(task);
   }
 
-  deleteTask(task: Task) {
+  async deleteTask(task: Task) {
     this.tasks = this.tasks.filter(t => t.id !== task.id);
+
+    await this.database.deleteTask(task.id);
   }
 
   get remainingTasksCount() {
