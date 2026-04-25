@@ -1,0 +1,46 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title color="dark">Filter by Category</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">
+        <ion-icon name="close-outline" slot="icon-only" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="filter-options">
+    <div
+      class="filter-item"
+      (click)="selectCategory(null)"
+      [class.selected]="selectedCategoryId === null"
+    >
+      <div class="color-indicator all-colors"></div>
+      <span class="category-name">Show All</span>
+      <ion-icon name="checkmark" *ngIf="selectedCategoryId === null"></ion-icon>
+    </div>
+
+    <div
+      class="filter-item"
+      *ngFor="let category of categories"
+      (click)="selectCategory(category.id)"
+      [class.selected]="selectedCategoryId === category.id"
+    >
+      <div class="color-indicator" [style.background-color]="category.color"></div>
+      <span class="category-name">{{ category.name }}</span>
+      <ion-icon name="checkmark" *ngIf="selectedCategoryId === category.id" [style.color]="category.color"></ion-icon>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="footer-buttons">
+    <ion-button fill="outline" (click)="cancel()" class="cancel-btn">
+      CANCEL
+    </ion-button>
+    <ion-button expand="block" (click)="apply()" class="apply-btn">
+      APPLY FILTER
+    </ion-button>
+  </div>
+</ion-footer>

@@ -1,6 +1,11 @@
 <ion-content [fullscreen]="true">
   <div class="container">
-    <h1 class="title">Your To Do</h1>
+    <div class="header-row">
+      <h1 class="title">Your To Do</h1>
+      <ion-button fill="clear" (click)="openFilter()" class="filter-button" [class.filter-active]="selectedCategoryId !== null">
+        <ion-icon slot="icon-only" [name]="selectedCategoryId ? 'filter' : 'filter-outline'"></ion-icon>
+      </ion-button>
+    </div>
 
     <div class="input-container">
       <ion-input
@@ -14,7 +19,7 @@
     </div>
 
     <div class="task-list">
-      <div class="task-item" *ngFor="let task of tasks">
+      <div class="task-item" *ngFor="let task of displayTasks">
         <ion-checkbox
           [checked]="task.completed"
           (ionChange)="toggleTask(task)"

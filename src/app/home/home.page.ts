@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { Task } from '../models/task.model';
 import { Database } from '../services/database';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
+import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,9 @@ import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-crea
 })
 export class HomePage implements OnInit {
   newTask: string = '';
-  tasks: Task[] = [];
+  allTasks: Task[] = [];
+  displayTasks: Task[] = [];
+  selectedCategoryId: string | null = null;
 
   constructor(
     private database: Database,
@@ -21,7 +24,20 @@ export class HomePage implements OnInit {
   }
 
   async ngOnInit() {
-    this.tasks = await this.database.getTasks();
+    this.loadTasks();
+  }
+
+  async loadTasks() {
+    this.allTasks = await this.database.getTasks();
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    if (!this.selectedCategoryId) {
+      this.displayTasks = [...this.allTasks];
+    } else {
+      this.displayTasks = this.allTasks.filter(t => t.category?.id === this.selectedCategoryId);
+    }
   }
 
   async openAddTaskModal() {
@@ -41,10 +57,26 @@ export class HomePage implements OnInit {
       };
 
       await this.database.addTask(task);
+      await this.loadTasks();
     }
+  }
 
-    // Always refresh tasks to ensure updated category names/colors are reflected
-    this.tasks = await this.database.getTasks();
+  async openFilter() {
+    const modal = await this.modalCtrl.create({
+      component: CategoriesFilterModalComponent,
+      componentProps: {
+        selectedCategoryId: this.selectedCategoryId
+      }
+    });
+
+    await modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      this.selectedCategoryId = data;
+      this.applyFilter();
+    }
   }
 
   async addTask() {
@@ -56,26 +88,22 @@ export class HomePage implements OnInit {
       completed: false
     }
 
-    this.tasks.push(task);
-
-    this.newTask = '';
-
     await this.database.addTask(task);
+    this.newTask = '';
+    await this.loadTasks();
   }
 
   async toggleTask(task: Task) {
     task.completed = !task.completed;
-
     await this.database.updateTask(task);
   }
 
   async deleteTask(task: Task) {
-    this.tasks = this.tasks.filter(t => t.id !== task.id);
-
     await this.database.deleteTask(task.id);
+    await this.loadTasks();
   }
 
   get remainingTasksCount() {
-    return this.tasks.filter(t => !t.completed).length;
+    return this.displayTasks.filter(t => !t.completed).length;
   }
 }

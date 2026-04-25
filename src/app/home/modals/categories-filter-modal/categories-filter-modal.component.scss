@@ -1,0 +1,90 @@
+ion-toolbar {
+  --background: #ffffff;
+  --color: #333333;
+}
+
+ion-content {
+  --background: #ffffff;
+}
+
+.filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid #cccccc;
+  border-radius: 12px;
+  background-color: #ffffff;
+  gap: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &.selected {
+    border-color: #444444;
+    border-width: 2px;
+    background-color: #f9f9f9;
+  }
+
+  ion-icon {
+    font-size: 20px;
+    color: #444444;
+  }
+}
+
+.color-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.all-colors {
+  background: linear-gradient(45deg, #444, #ccc);
+}
+
+.category-name {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 700;
+  color: #444444;
+}
+
+ion-footer {
+  background: #ffffff;
+  padding: 10px 24px 30px 24px;
+}
+
+.footer-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cancel-btn, .apply-btn {
+  flex: 1;
+  height: 54px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: 15px;
+  --box-shadow: none;
+}
+
+.cancel-btn {
+  --border-color: #cccccc;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-radius: 10px;
+  --color: #777777;
+}
+
+.apply-btn {
+  --background: #444444;
+  --background-activated: #222222;
+  --border-radius: 10px;
+  --color: #ffffff;
+}
