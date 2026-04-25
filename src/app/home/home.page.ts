@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Task } from '../models/task.model';
 import { Database } from '../services/database';
 
@@ -8,7 +8,7 @@ import { Database } from '../services/database';
   styleUrls: ['home.page.scss'],
   standalone: false,
 })
-export class HomePage {
+export class HomePage implements OnInit {
   newTask: string = '';
   tasks: Task[] = [];
 

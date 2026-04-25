@@ -23,6 +23,15 @@
         <span [class.completed]="task.completed" class="task-title">
           {{ task.title }}
         </span>
+        <ion-chip
+          *ngIf="task.category"
+          [style.background]="task.category.color"
+          style="color: white;"
+        >
+          <ion-label>
+            {{ task.category.name }}
+          </ion-label>
+        </ion-chip>
         <ion-button (click)="deleteTask(task)" fill="clear" class="delete-button">
           <ion-icon slot="icon-only" name="close"></ion-icon>
         </ion-button>
