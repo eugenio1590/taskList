@@ -63,11 +63,26 @@ export class Database {
     await this.dbInstance?.executeSql(query, []);
   }
 
+  private async seedCategories() {
+    const res = await this.dbInstance?.executeSql(`SELECT COUNT(*) as count FROM categories`, []);
+    if (res && res.rows.item(0).count === 0) {
+      const defaultCategories: Category[] = [
+        { id: '1', name: 'Meeting', color: '#5260ff' },
+        { id: '2', name: 'Business', color: '#999999' },
+        { id: '3', name: 'Freelance', color: '#2dd36f' },
+        { id: '4', name: 'Family', color: '#eb445a' }
+      ];
+      for (const cat of defaultCategories) {
+        await this.addCategory(cat);
+      }
+    }
+  }
+
   async getTasks(): Promise<Task[]> {
     await this.init();
 
     const query = `
-      SELECT 
+      SELECT
         t.id,
         t.title,
         t.completed,
@@ -77,7 +92,7 @@ export class Database {
         FROM tasks t
         LEFT JOIN categories c ON t.category_id = c.id;
     `;
-    const res = await this.dbInstance?.executeSql(`SELECT * FROM tasks`, []);
+    const res = await this.dbInstance?.executeSql(query, []);
     const tasks: Task[] = [];
 
     for (let i = 0; i < (res?.rows.length || 0); i++) {
@@ -86,11 +101,11 @@ export class Database {
         id: item.id,
         title: item.title,
         completed: item.completed === 1,
-        category: {
+        category: item.category_id ? {
           id: item.category_id,
           name: item.category_name,
           color: item.category_color
-        }
+        } : null
       });
     }
 
@@ -105,7 +120,7 @@ export class Database {
       task.id,
       task.title,
       task.completed ? 1 : 0,
-      task.category?.id,
+      task.category?.id || null,
     ]);
   }
 
@@ -116,11 +131,11 @@ export class Database {
     await this.dbInstance?.executeSql(query, [
       task.title,
       task.completed ? 1 : 0,
-      task.category?.id,
+      task.category?.id || null,
       task.id
     ]);
   }
-  
+
   async deleteTask(id: string) {
     await this.init();
 
@@ -130,6 +145,7 @@ export class Database {
 
   async getCategories(): Promise<Category[]> {
     await this.init();
+    await this.seedCategories();
 
     const res = await this.dbInstance?.executeSql(`SELECT * FROM categories`, []);
     const categories: Category[] = [];

@@ -1,0 +1,130 @@
+ion-toolbar {
+  --background: #ffffff;
+  --color: #333333;
+}
+
+ion-content {
+  --background: #ffffff;
+}
+
+.content-container {
+  padding-top: 10px;
+}
+
+.task-title-input {
+  font-size: 32px;
+  font-weight: 800;
+  color: #333333;
+  --placeholder-color: #999999;
+  --placeholder-opacity: 1;
+  margin-bottom: 5px;
+
+  --highlight-height: 0;
+  border-bottom: 1px solid #333333;
+  --padding-bottom: 8px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #aaaaaa;
+  font-size: 13px;
+  margin-bottom: 30px;
+  padding-left: 5px;
+  padding-top: 10px;
+
+  .divider {
+    color: #cccccc;
+  }
+}
+
+.description-section {
+  position: relative;
+  min-height: 200px;
+
+  .placeholder-text {
+    color: #999999;
+    font-size: 18px;
+    margin-left: 5px;
+    position: absolute;
+    top: 0;
+    pointer-events: none;
+  }
+}
+
+.category-selection-area {
+  margin-top: 50px;
+}
+
+.section-label {
+  color: #444444;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-chip {
+  padding: 8px 16px;
+  border-radius: 12px;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #cccccc;
+  color: #777777;
+  background-color: #ffffff;
+
+  &.selected {
+    border-color: transparent;
+  }
+}
+
+ion-footer {
+  background: #ffffff;
+  padding: 10px 24px 30px 24px;
+}
+
+.footer-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px; // Balanced gap between buttons
+}
+
+.cancel-btn, .create-btn {
+  flex: 1; // Ensures both buttons take exactly half the width
+  height: 54px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  font-size: 15px;
+  --box-shadow: none;
+}
+
+.cancel-btn {
+  --border-color: #cccccc;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-radius: 10px;
+  --color: #777777;
+}
+
+.create-btn {
+  --background: #444444;
+  --background-activated: #222222;
+  --border-radius: 10px;
+  --color: #ffffff;
+}
+
+.create-top-btn {
+  font-weight: 700;
+  font-size: 14px;
+  --color: #333333;
+}

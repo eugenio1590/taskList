@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
 import { Task } from '../models/task.model';
 import { Database } from '../services/database';
+import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -12,11 +14,35 @@ export class HomePage implements OnInit {
   newTask: string = '';
   tasks: Task[] = [];
 
-  constructor(private database: Database) {
+  constructor(
+    private database: Database,
+    private modalCtrl: ModalController
+  ) {
   }
 
   async ngOnInit() {
     this.tasks = await this.database.getTasks();
+  }
+
+  async openAddTaskModal() {
+    const modal = await this.modalCtrl.create({
+      component: TaskCreatorModalComponent
+    });
+    modal.present();
+
+    const { data, role } = await modal.onWillDismiss();
+
+    if (role === 'confirm') {
+      const task: Task = {
+        id: Date.now().toString(),
+        title: data.title,
+        completed: false,
+        category: data.category
+      };
+
+      this.tasks.push(task);
+      await this.database.addTask(task);
+    }
   }
 
   async addTask() {

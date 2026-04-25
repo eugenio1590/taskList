@@ -1,0 +1,57 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()">
+        <ion-icon name="arrow-back-outline" slot="icon-only" color="dark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="content-container">
+    <div class="title-section">
+      <ion-input
+        placeholder="Name your task"
+        [(ngModel)]="taskTitle"
+        class="task-title-input"
+        autofocus="true"
+      ></ion-input>
+    </div>
+
+    <div class="info-row">
+      <span class="date-text">{{ currentDate }}</span>
+      <span class="divider">|</span>
+      <span class="info-text">{{ selectedCategory?.name || 'No category' }}</span>
+    </div>
+
+    <div class="description-section">
+      <div class="category-selection-area">
+        <div class="section-label">Choose Category</div>
+        <div class="categories-container">
+          <div
+            *ngFor="let category of categories"
+            (click)="selectCategory(category)"
+            class="category-chip"
+            [class.selected]="selectedCategory?.id === category.id"
+            [style.background-color]="selectedCategory?.id === category.id ? category.color : 'white'"
+            [style.color]="selectedCategory?.id === category.id ? 'white' : '#777'"
+          >
+            {{ category.name }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="ion-no-border">
+  <div class="footer-buttons">
+    <ion-button fill="outline" (click)="cancel()" class="cancel-btn">
+      CANCEL
+    </ion-button>
+    <ion-button expand="block" (click)="confirm()" [disabled]="!taskTitle || !selectedCategory" class="create-btn">
+      CREATE TASK
+    </ion-button>
+  </div>
+</ion-footer>
