@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Category } from '../../../models/category.model';
 import { CategoriesPage } from 'src/app/categories/categories.page';
-import { ConfigurationRepository } from '../../../repositories/configuration.repository';
 import { GetCategoriesUseCase } from '../../../interactor/category/get/get-categories.use-case';
+import { IsAddCategoriesEnabledUseCase } from '../../../interactor/configuration/is-add-categories-enabled.use-case';
 
 @Component({
   selector: 'app-task-creator-modal',
@@ -20,7 +20,7 @@ export class TaskCreatorModalComponent implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private configRepository: ConfigurationRepository,
+    private isAddCategoriesEnabled: IsAddCategoriesEnabledUseCase,
     private getCategories: GetCategoriesUseCase
   ) {
     const now = new Date();
@@ -34,13 +34,7 @@ export class TaskCreatorModalComponent implements OnInit {
 
   async ngOnInit() {
     this.categories = await this.getCategories.execute();
-
-    try {
-      this.enableAddCategories = await this.configRepository.getBoolean('enable_add_categories');
-    } catch(e) {
-      console.error('Error fetching remote config', e);
-      this.enableAddCategories = false; // Default
-    }
+    this.enableAddCategories = await this.isAddCategoriesEnabled.execute();
   }
 
   selectCategory(category: Category) {
