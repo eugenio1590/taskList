@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Category } from '../../../models/category.model';
-import { Database } from '../../../services/database';
 import { CategoriesPage } from 'src/app/categories/categories.page';
 import { RemoteConfig } from 'src/app/services/remote-config';
+import { GetCategoriesUseCase } from '../../../interactor/category/get/get-categories.use-case';
 
 @Component({
   selector: 'app-task-creator-modal',
@@ -20,8 +20,8 @@ export class TaskCreatorModalComponent implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private database: Database,
-    private remoteConfig: RemoteConfig
+    private remoteConfig: RemoteConfig,
+    private getCategories: GetCategoriesUseCase
   ) {
     const now = new Date();
     this.currentDate = now.toLocaleDateString('es-ES', {
@@ -33,7 +33,7 @@ export class TaskCreatorModalComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.categories = await this.database.getCategories();
+    this.categories = await this.getCategories.execute();
 
     try {
       this.enableAddCategories = await this.remoteConfig.getBoolean('enable_add_categories');
@@ -55,7 +55,7 @@ export class TaskCreatorModalComponent implements OnInit {
     await modal.present();
 
     await modal.onWillDismiss();
-    this.categories = await this.database.getCategories();
+    this.categories = await this.getCategories.execute();
 
     // Re-sync selectedCategory if it was modified or deleted in the management view
     if (this.selectedCategory) {

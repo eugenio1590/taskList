@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Task } from '../models/task.model';
-import { Database } from '../services/database';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
 import { RemoteConfig } from '../services/remote-config';
+import { CreateTaskUseCase } from '../interactor/task/create/create-task.use-case';
+import { UpdateTaskUseCase } from '../interactor/task/update/update-task.use-case';
+import { DeleteTaskUseCase } from '../interactor/task/delete/delete-task.use-case';
+import { GetTasksUseCase } from '../interactor/task/get/get-tasks.use-case';
 
 @Component({
   selector: 'app-home',
@@ -20,15 +23,17 @@ export class HomePage implements OnInit {
   addWithCategoryEnabled: boolean = false;
 
   constructor(
-    private database: Database,
     private remoteConfig: RemoteConfig,
-    private modalCtrl: ModalController
-  ) {
-  }
+    private modalCtrl: ModalController,
+    private createTask: CreateTaskUseCase,
+    private updateTask: UpdateTaskUseCase,
+    private deleteTask: DeleteTaskUseCase,
+    private getTasks: GetTasksUseCase
+  ) { }
 
   async ngOnInit() {
     await this.loadTasks();
-    
+
     try {
       this.addWithCategoryEnabled = await this.remoteConfig.getBoolean('add_tasks_with_category');
     } catch(e) {
@@ -38,7 +43,7 @@ export class HomePage implements OnInit {
   }
 
   async loadTasks() {
-    this.allTasks = await this.database.getTasks();
+    this.allTasks = await this.getTasks.execute();
     this.applyFilter();
   }
 
@@ -59,14 +64,7 @@ export class HomePage implements OnInit {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-      const task: Task = {
-        id: Date.now().toString(),
-        title: data.title,
-        completed: false,
-        category: data.category
-      };
-
-      await this.database.addTask(task);
+      await this.createTask.execute(data.title, data.category);
       await this.loadTasks();
     }
   }
@@ -92,24 +90,18 @@ export class HomePage implements OnInit {
   async addTask() {
     if (!this.newTask.trim()) return;
 
-    let task: Task = {
-      id: Date.now().toString(),
-      title: this.newTask,
-      completed: false
-    }
-
-    await this.database.addTask(task);
+    await this.createTask.execute(this.newTask, null);
     this.newTask = '';
     await this.loadTasks();
   }
 
   async toggleTask(task: Task) {
     task.completed = !task.completed;
-    await this.database.updateTask(task);
+    await this.updateTask.execute(task);
   }
 
-  async deleteTask(task: Task) {
-    await this.database.deleteTask(task.id);
+  async removeTask(task: Task) {
+    await this.deleteTask.execute(task.id);
     await this.loadTasks();
   }
 

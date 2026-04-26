@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Category } from '../models/category.model';
-import { Database } from '../services/database';
+import { CreateCategoryUseCase } from '../interactor/category/create/create-category.use-case';
+import { UpdateCategoryUseCase } from '../interactor/category/update/update-category.use-case';
+import { GetCategoriesUseCase } from '../interactor/category/get/get-categories.use-case';
+import { DeleteCategoryUseCase } from '../interactor/category/delete/delete-category.use-case';
 
 @Component({
   selector: 'app-categories',
@@ -20,8 +23,11 @@ export class CategoriesPage implements OnInit {
   ];
 
   constructor(
-    private database: Database,
-    private modalCtrl: ModalController
+    private modalCtrl: ModalController,
+    private createCategory: CreateCategoryUseCase,
+    private updateCategory: UpdateCategoryUseCase,
+    private getCategories: GetCategoriesUseCase,
+    private deleteCategory: DeleteCategoryUseCase
   ) { }
 
   async ngOnInit() {
@@ -29,7 +35,7 @@ export class CategoriesPage implements OnInit {
   }
 
   async loadCategories() {
-    this.categories = await this.database.getCategories();
+    this.categories = await this.getCategories.execute();
   }
 
   async saveCategory() {
@@ -42,16 +48,11 @@ export class CategoriesPage implements OnInit {
         name: this.newCategoryName,
         color: this.selectedColor
       };
-      await this.database.updateCategory(updatedCategory);
+      await this.updateCategory.execute(updatedCategory);
       this.editingCategory = null;
     } else {
       // Add new
-      const newCategory: Category = {
-        id: Date.now().toString(),
-        name: this.newCategoryName,
-        color: this.selectedColor
-      };
-      await this.database.addCategory(newCategory);
+      await this.createCategory.execute(this.newCategoryName, this.selectedColor);
     }
 
     this.newCategoryName = '';
@@ -71,8 +72,8 @@ export class CategoriesPage implements OnInit {
     this.selectedColor = '#444444';
   }
 
-  async deleteCategory(id: string) {
-    await this.database.deleteCategory(id);
+  async removeCategory(id: string) {
+    await this.deleteCategory.execute(id);
     if (this.editingCategory?.id === id) {
       this.cancelEdit();
     }
