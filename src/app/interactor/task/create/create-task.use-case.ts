@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { TaskRepository } from '../../../repositories/task.repository';
 import { Task } from '../../../models/task.model';
 import { Category } from '../../../models/category.model';
 
@@ -7,7 +7,7 @@ import { Category } from '../../../models/category.model';
   providedIn: 'root',
 })
 export class CreateTaskUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: TaskRepository) {}
 
   async execute(title: string, category: Category | null): Promise<void> {
     if (!title || !title.trim()) {
@@ -21,6 +21,6 @@ export class CreateTaskUseCase {
       category: category
     };
 
-    return await this.database.addTask(newTask);
+    return await this.repository.addTask(newTask);
   }
 }

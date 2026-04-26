@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { TaskRepository } from '../../../repositories/task.repository';
 import { Task } from '../../../models/task.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GetTasksUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: TaskRepository) {}
 
   async execute(): Promise<Task[]> {
-    return await this.database.getTasks();
+    return await this.repository.getTasks();
   }
 }

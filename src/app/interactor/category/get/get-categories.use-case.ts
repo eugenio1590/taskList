@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { CategoryRepository } from '../../../repositories/category.repository';
 import { Category } from '../../../models/category.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GetCategoriesUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: CategoryRepository) {}
 
   async execute(): Promise<Category[]> {
-    return await this.database.getCategories();
+    return await this.repository.getCategories();
   }
 }

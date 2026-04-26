@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Category } from '../../../models/category.model';
 import { CategoriesPage } from 'src/app/categories/categories.page';
-import { RemoteConfig } from 'src/app/services/remote-config';
+import { ConfigurationRepository } from '../../../repositories/configuration.repository';
 import { GetCategoriesUseCase } from '../../../interactor/category/get/get-categories.use-case';
 
 @Component({
@@ -20,7 +20,7 @@ export class TaskCreatorModalComponent implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private remoteConfig: RemoteConfig,
+    private configRepository: ConfigurationRepository,
     private getCategories: GetCategoriesUseCase
   ) {
     const now = new Date();
@@ -36,7 +36,7 @@ export class TaskCreatorModalComponent implements OnInit {
     this.categories = await this.getCategories.execute();
 
     try {
-      this.enableAddCategories = await this.remoteConfig.getBoolean('enable_add_categories');
+      this.enableAddCategories = await this.configRepository.getBoolean('enable_add_categories');
     } catch(e) {
       console.error('Error fetching remote config', e);
       this.enableAddCategories = false; // Default

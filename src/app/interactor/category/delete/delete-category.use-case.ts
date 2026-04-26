@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { CategoryRepository } from '../../../repositories/category.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DeleteCategoryUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: CategoryRepository) {}
 
   async execute(id: string): Promise<void> {
     if (!id) {
       throw new Error('Category ID is required for deletion');
     }
 
-    return await this.database.deleteCategory(id);
+    return await this.repository.deleteCategory(id);
   }
 }

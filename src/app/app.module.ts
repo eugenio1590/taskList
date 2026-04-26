@@ -12,6 +12,11 @@ import { AppRoutingModule } from './app-routing.module';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import { provideRemoteConfig, getRemoteConfig } from '@angular/fire/remote-config';
+import { TaskRepository } from './repositories/task.repository';
+import { CategoryRepository } from './repositories/category.repository';
+import { ConfigurationRepository } from './repositories/configuration.repository';
+import { Database } from './services/database';
+import { RemoteConfig } from './services/remote-config';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +28,9 @@ import { provideRemoteConfig, getRemoteConfig } from '@angular/fire/remote-confi
   providers: [
     SQLite,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: TaskRepository, useClass: Database },
+    { provide: CategoryRepository, useClass: Database },
+    { provide: ConfigurationRepository, useClass: RemoteConfig },
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideRemoteConfig(() => getRemoteConfig())
   ],

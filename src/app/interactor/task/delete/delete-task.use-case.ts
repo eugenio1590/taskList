@@ -1,17 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { TaskRepository } from '../../../repositories/task.repository';
 
 @Injectable({
   providedIn: 'root',
 })
 export class DeleteTaskUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: TaskRepository) {}
 
   async execute(id: string): Promise<void> {
     if (!id) {
       throw new Error('Task ID is required for deletion');
     }
 
-    return await this.database.deleteTask(id);
+    return await this.repository.deleteTask(id);
   }
 }

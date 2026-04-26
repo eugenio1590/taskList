@@ -3,7 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { Task } from '../models/task.model';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
-import { RemoteConfig } from '../services/remote-config';
+import { ConfigurationRepository } from '../repositories/configuration.repository';
 import { CreateTaskUseCase } from '../interactor/task/create/create-task.use-case';
 import { UpdateTaskUseCase } from '../interactor/task/update/update-task.use-case';
 import { DeleteTaskUseCase } from '../interactor/task/delete/delete-task.use-case';
@@ -23,7 +23,7 @@ export class HomePage implements OnInit {
   addWithCategoryEnabled: boolean = false;
 
   constructor(
-    private remoteConfig: RemoteConfig,
+    private configRepository: ConfigurationRepository,
     private modalCtrl: ModalController,
     private createTask: CreateTaskUseCase,
     private updateTask: UpdateTaskUseCase,
@@ -35,7 +35,7 @@ export class HomePage implements OnInit {
     await this.loadTasks();
 
     try {
-      this.addWithCategoryEnabled = await this.remoteConfig.getBoolean('add_tasks_with_category');
+      this.addWithCategoryEnabled = await this.configRepository.getBoolean('add_tasks_with_category');
     } catch(e) {
       console.error('Error fetching remote config', e);
       this.addWithCategoryEnabled = false; // Default

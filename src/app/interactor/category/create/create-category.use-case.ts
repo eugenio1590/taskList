@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { CategoryRepository } from '../../../repositories/category.repository';
 import { Category } from '../../../models/category.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CreateCategoryUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: CategoryRepository) {}
 
   async execute(name: string, color: string): Promise<void> {
     if (!name || !name.trim()) {
@@ -19,6 +19,6 @@ export class CreateCategoryUseCase {
       color: color
     };
 
-    return await this.database.addCategory(newCategory);
+    return await this.repository.addCategory(newCategory);
   }
 }

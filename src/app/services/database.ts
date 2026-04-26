@@ -4,11 +4,13 @@ import { Platform } from '@ionic/angular';
 
 import { Task } from '../models/task.model';
 import { Category } from '../models/category.model';
+import { TaskRepository } from '../repositories/task.repository';
+import { CategoryRepository } from '../repositories/category.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class Database {
+export class Database implements TaskRepository, CategoryRepository {
   private dbInstance: SQLiteObject | null = null;
   private isDbInitialized = false;
 
@@ -178,7 +180,7 @@ export class Database {
       category.id
     ]);
   }
-  
+
   async deleteCategory(id: string) {
     await this.init();
 

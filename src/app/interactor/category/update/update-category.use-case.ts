@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { Database } from '../../../services/database';
+import { CategoryRepository } from '../../../repositories/category.repository';
 import { Category } from '../../../models/category.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UpdateCategoryUseCase {
-  constructor(private database: Database) {}
+  constructor(private repository: CategoryRepository) {}
 
   async execute(category: Category): Promise<void> {
     if (!category.name || !category.name.trim()) {
       throw new Error('Category name cannot be empty');
     }
 
-    return await this.database.updateCategory(category);
+    return await this.repository.updateCategory(category);
   }
 }

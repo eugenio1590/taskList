@@ -2,11 +2,12 @@ import { Injectable, Injector, runInInjectionContext } from '@angular/core';
 import { RemoteConfig as FireRemoteConfig, fetchAndActivate, getString, getBoolean } from '@angular/fire/remote-config';
 
 import { environment } from 'src/environments/environment';
+import { ConfigurationRepository } from '../repositories/configuration.repository';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RemoteConfig {
+export class RemoteConfig implements ConfigurationRepository {
   private initPromise: Promise<void> | null = null;
 
   constructor(
