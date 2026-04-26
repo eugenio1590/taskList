@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, InfiniteScrollCustomEvent } from '@ionic/angular';
 import { Task } from '../models/task.model';
 import { TaskCreatorModalComponent } from './modals/task-creator-modal/task-creator-modal.component';
 import { CategoriesFilterModalComponent } from './modals/categories-filter-modal/categories-filter-modal.component';
@@ -17,10 +17,13 @@ import { IsAddTasksWithCategoryEnabledUseCase } from '../interactor/configuratio
 })
 export class HomePage implements OnInit {
   newTask: string = '';
-  allTasks: Task[] = [];
   displayTasks: Task[] = [];
   selectedCategoryId: string | null = null;
   addWithCategoryEnabled: boolean = false;
+
+  private currentPage = 0;
+  private pageSize = 20;
+  public hasMoreTasks = true;
 
   constructor(
     private isAddTasksWithCategoryEnabled: IsAddTasksWithCategoryEnabledUseCase,
@@ -36,16 +39,26 @@ export class HomePage implements OnInit {
     this.addWithCategoryEnabled = await this.isAddTasksWithCategoryEnabled.execute();
   }
 
-  async loadTasks() {
-    this.allTasks = await this.getTasks.execute();
-    this.applyFilter();
-  }
+  async loadTasks(event?: InfiniteScrollCustomEvent) {
+    if (!event) {
+      this.currentPage = 0;
+      this.displayTasks = [];
+      this.hasMoreTasks = true;
+    }
 
-  applyFilter() {
-    if (!this.selectedCategoryId) {
-      this.displayTasks = [...this.allTasks];
-    } else {
-      this.displayTasks = this.allTasks.filter(t => t.category?.id === this.selectedCategoryId);
+    const newTasks = await this.getTasks.execute(this.currentPage, this.pageSize, this.selectedCategoryId);
+
+    if (newTasks.length < this.pageSize) {
+      this.hasMoreTasks = false;
+    }
+
+    // Filter out tasks that are already in the display list (optimistic updates)
+    const filteredNewTasks = newTasks.filter(nt => !this.displayTasks.some(dt => dt.id === nt.id));
+    this.displayTasks = [...this.displayTasks, ...filteredNewTasks];
+    this.currentPage++;
+
+    if (event) {
+      event.target.complete();
     }
   }
 
@@ -58,8 +71,10 @@ export class HomePage implements OnInit {
     const { data, role } = await modal.onWillDismiss();
 
     if (role === 'confirm') {
-      await this.createTask.execute(data.title, data.category);
-      await this.loadTasks();
+      const task = await this.createTask.execute(data.title, data.category);
+      if (!this.selectedCategoryId || task.category?.id === this.selectedCategoryId) {
+        this.displayTasks = [task, ...this.displayTasks];
+      }
     }
   }
 
@@ -75,18 +90,21 @@ export class HomePage implements OnInit {
 
     const { data, role } = await modal.onWillDismiss();
 
-    if (role === 'confirm') {
+    if (role === 'confirm' && data !== this.selectedCategoryId) {
       this.selectedCategoryId = data;
-      this.applyFilter();
+      this.loadTasks();
     }
   }
 
   async addTask() {
     if (!this.newTask.trim()) return;
 
-    await this.createTask.execute(this.newTask, null);
+    const task = await this.createTask.execute(this.newTask, null);
     this.newTask = '';
-    await this.loadTasks();
+
+    if (!this.selectedCategoryId) {
+      this.displayTasks = [task, ...this.displayTasks];
+    }
   }
 
   async toggleTask(task: Task) {
@@ -96,7 +114,7 @@ export class HomePage implements OnInit {
 
   async removeTask(task: Task) {
     await this.deleteTask.execute(task.id);
-    await this.loadTasks();
+    this.displayTasks = this.displayTasks.filter(t => t.id !== task.id);
   }
 
   get remainingTasksCount() {

@@ -9,4 +9,5 @@ import { Component, Input } from '@angular/core';
 export class EmptyStateComponent {
   @Input() icon: string = 'clipboard-outline';
   @Input() message: string = 'No items found.';
+  @Input() quote?: string;
 }

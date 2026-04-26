@@ -9,7 +9,7 @@ import { Category } from '../../../models/category.model';
 export class CreateTaskUseCase {
   constructor(private repository: TaskRepository) {}
 
-  async execute(title: string, category: Category | null): Promise<void> {
+  async execute(title: string, category: Category | null): Promise<Task> {
     if (!title || !title.trim()) {
       throw new Error('Task title cannot be empty');
     }
@@ -21,6 +21,7 @@ export class CreateTaskUseCase {
       category: category
     };
 
-    return await this.repository.addTask(newTask);
+    await this.repository.addTask(newTask);
+    return newTask;
   }
 }

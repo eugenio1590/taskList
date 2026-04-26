@@ -8,7 +8,8 @@ import { Task } from '../../../models/task.model';
 export class GetTasksUseCase {
   constructor(private repository: TaskRepository) {}
 
-  async execute(): Promise<Task[]> {
-    return await this.repository.getTasks();
+  async execute(page: number = 0, limit: number = 20, categoryId: string | null = null): Promise<Task[]> {
+    const offset = page * limit;
+    return await this.repository.getTasks(limit, offset, categoryId);
   }
 }

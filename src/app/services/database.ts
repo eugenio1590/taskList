@@ -75,10 +75,10 @@ export class Database implements TaskRepository, CategoryRepository {
     }
   }
 
-  async getTasks(): Promise<Task[]> {
+  async getTasks(limit: number = -1, offset: number = 0, categoryId: string | null = null): Promise<Task[]> {
     await this.init();
 
-    const query = `
+    let query = `
       SELECT
         t.id,
         t.title,
@@ -87,9 +87,22 @@ export class Database implements TaskRepository, CategoryRepository {
         c.name as category_name,
         c.color as category_color
         FROM tasks t
-        LEFT JOIN categories c ON t.category_id = c.id;
+        LEFT JOIN categories c ON t.category_id = c.id
     `;
-    const res = await this.dbInstance?.executeSql(query, []);
+
+    const params: any[] = [];
+
+    if (categoryId) {
+      query += ` WHERE t.category_id = ?`;
+      params.push(categoryId);
+    }
+
+    if (limit !== -1) {
+      query += ` LIMIT ? OFFSET ?`;
+      params.push(limit, offset);
+    }
+
+    const res = await this.dbInstance?.executeSql(query, params);
     const tasks: Task[] = [];
 
     for (let i = 0; i < (res?.rows.length || 0); i++) {

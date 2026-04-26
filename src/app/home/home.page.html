@@ -1,11 +1,15 @@
-<ion-content [fullscreen]="true">
-  <div class="container">
+<ion-header class="ion-no-border">
+  <div class="fixed-header-container">
     <div class="header-row">
       <h1 class="title">Your To Do</h1>
       <ion-button *ngIf="addWithCategoryEnabled" fill="clear" (click)="openFilter()" class="filter-button" [class.filter-active]="selectedCategoryId !== null">
         <ion-icon slot="icon-only" [name]="selectedCategoryId ? 'filter' : 'filter-outline'"></ion-icon>
       </ion-button>
     </div>
+
+    <p class="remaining-text" *ngIf="displayTasks.length > 0">
+      <i><b>Your remaining todos : {{ remainingTasksCount }}</b></i>
+    </p>
 
     <div class="input-container" *ngIf="!addWithCategoryEnabled">
       <ion-input
@@ -17,46 +21,48 @@
         <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
     </div>
+  </div>
+</ion-header>
 
-    <div class="task-list" *ngIf="displayTasks.length > 0; else emptyState">
-      <div class="task-item" *ngFor="let task of displayTasks">
-        <ion-checkbox
-          [checked]="task.completed"
-          (ionChange)="toggleTask(task)"
-          mode="md">
-        </ion-checkbox>
-        <span [class.completed]="task.completed" class="task-title">
-          {{ task.title }}
-        </span>
-        <ion-chip
-          *ngIf="task.category && addWithCategoryEnabled"
-          [style.background]="task.category.color"
-          style="color: white;"
-        >
-          <ion-label>
-            {{ task.category.name }}
-          </ion-label>
-        </ion-chip>
-        <ion-button (click)="removeTask(task)" fill="clear" class="delete-button">
-          <ion-icon slot="icon-only" name="close"></ion-icon>
-        </ion-button>
-      </div>
+<ion-content [fullscreen]="true">
+  <div class="scrollable-container">
+    <div class="task-list">
+      @for (task of displayTasks; track task.id) {
+        <div class="task-item">
+          <ion-checkbox
+            [checked]="task.completed"
+            (ionChange)="toggleTask(task)"
+            mode="md">
+          </ion-checkbox>
+          <span [class.completed]="task.completed" class="task-title">
+            {{ task.title }}
+          </span>
+          <ion-chip
+            *ngIf="task.category && addWithCategoryEnabled"
+            [style.background]="task.category.color"
+            style="color: white;"
+          >
+            <ion-label>
+              {{ task.category.name }}
+            </ion-label>
+          </ion-chip>
+          <ion-button (click)="removeTask(task)" fill="clear" class="delete-button">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </div>
+      } @empty {
+        <app-empty-state
+          [icon]="'clipboard-outline'"
+          [message]="!selectedCategoryId ? 'You have no tasks yet. Add one above!' : 'No tasks found for this category.'"
+          [quote]="'Doing what you love is the cornerstone of having abundance in your life. - Wayne Dyer'"
+        ></app-empty-state>
+      }
     </div>
 
-    <ng-template #emptyState>
-      <app-empty-state
-        [icon]="'clipboard-outline'"
-        [message]="!selectedCategoryId ? 'You have no tasks yet. Add one above!' : 'No tasks found for this category.'"
-      ></app-empty-state>
-    </ng-template>
-
-    <p class="remaining-text" *ngIf="displayTasks.length > 0">
-      <i><b>Your remaining todos : {{ remainingTasksCount }}</b></i>
-    </p>
-
-    <p class="quote">
-      "Doing what you love is the cornerstone of having abundance in your life." - Wayne Dyer
-    </p>
+    <ion-infinite-scroll (ionInfinite)="loadTasks($event)" [disabled]="!hasMoreTasks">
+      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Loading more tasks...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
   </div>
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end" *ngIf="addWithCategoryEnabled">
@@ -65,3 +71,4 @@
     </ion-fab-button>
   </ion-fab>
 </ion-content>
+

@@ -1,4 +1,5 @@
 <div class="empty-state">
   <ion-icon [name]="icon"></ion-icon>
-  <p>{{ message }}</p>
+  <p class="message">{{ message }}</p>
+  <p *ngIf="quote" class="quote">"{{ quote }}"</p>
 </div>
